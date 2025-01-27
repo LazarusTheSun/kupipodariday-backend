@@ -1,21 +1,24 @@
 import { IsDate, IsEmail, Length } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK } from './constants';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   @IsDate()
-  createAt: Date;
+  createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn()
   @IsDate()
   updatedAt: Date;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   @Length(2, 30)
   username: string;
 
@@ -33,9 +36,11 @@ export class User {
   @Column({
     unique: true,
   })
+  @Exclude()
   @IsEmail()
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 }
