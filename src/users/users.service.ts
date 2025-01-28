@@ -3,7 +3,6 @@ import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindUserByUsernameDTO, FindUserByIdDTO } from './dto/find-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
 
@@ -27,19 +26,19 @@ export class UsersService {
       })
   }
 
-  async findUserByUsername(findUserDTO: FindUserByUsernameDTO) {
-    const user = await this.usersRepository.findOneBy(findUserDTO);
+  async findUserByUsername(username: string) {
+    const user = await this.usersRepository.findOneBy({ username });
 
     return user;
   }
 
-  async findUserById(findUserDTO: FindUserByIdDTO) {
-    const user = await this.usersRepository.findOneBy(findUserDTO);
+  async findUserById(id: number) {
+    const user = await this.usersRepository.findOneBy({ id });
 
     return user;
   }
 
-  async updateUser(updateUserDTO: UpdateUserDTO, userId: FindUserByIdDTO) {
+  async updateUser(updateUserDTO: UpdateUserDTO, userId: number) {
     const user = await this.findUserById(userId);
 
     if (updateUserDTO.password !== undefined) {

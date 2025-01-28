@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtGuard as AuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
@@ -20,5 +20,12 @@ export class UsersController {
     const updatedUser = await this.usersService.updateUser(updateUserDTO, req.user.id);
 
     return updatedUser;
+  }
+
+  @Get(':username')
+  async findAnotherUser(@Param('username') username: string) {
+    const user = await this.usersService.findUserByUsername(username);
+
+    return user;
   }
 }
