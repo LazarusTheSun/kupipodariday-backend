@@ -25,4 +25,10 @@ export class UsersService {
         return this.usersRepository.save(user);
       })
   }
+
+  findOne(findUserDTO: FindUserDTO) {
+    const user = this.usersRepository.findOneBy(findUserDTO);
+
+    return user;
+  }
 }
