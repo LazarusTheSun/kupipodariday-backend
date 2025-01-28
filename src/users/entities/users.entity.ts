@@ -1,6 +1,6 @@
 import { IsDate, IsEmail, Length } from 'class-validator';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK } from './constants';
+import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK, USERNAME_LENGTH, USER_ABOUT_LENGTH } from './constants';
 import { Exclude } from 'class-transformer';
 
 @Entity()
@@ -19,13 +19,13 @@ export class User {
   @Column({
     unique: true,
   })
-  @Length(2, 30)
+  @Length(USERNAME_LENGTH.min, USERNAME_LENGTH.max)
   username: string;
 
   @Column({
     default: DEFAULT_USER_DESCRIPTION
   })
-  @Length(2, 200)
+  @Length(USER_ABOUT_LENGTH.min, USER_ABOUT_LENGTH.max)
   about: string;
 
   @Column({

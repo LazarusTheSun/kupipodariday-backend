@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindUserDTO } from './dto/find-user.dto';
+import { FindUserByUsernameDTO, FindUserByIdDTO } from './dto/find-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -26,8 +26,14 @@ export class UsersService {
       })
   }
 
-  findOne(findUserDTO: FindUserDTO) {
-    const user = this.usersRepository.findOneBy(findUserDTO);
+  async findUserByUsername(findUserDTO: FindUserByUsernameDTO) {
+    const user = await this.usersRepository.findOneBy(findUserDTO);
+
+    return user;
+  }
+
+  async findUserById(findUserDTO: FindUserByIdDTO) {
+    const user = await this.usersRepository.findOneBy(findUserDTO);
 
     return user;
   }

@@ -17,8 +17,8 @@ export class AppController {
     return await this.usersService.create(createUserDTO);
   }
 
-  @Post('signin')
   @UseGuards(LocalGuard)
+  @Post('signin')
   async signIn(@Request() req) {
     return this.authService.login(req.user);
   }
