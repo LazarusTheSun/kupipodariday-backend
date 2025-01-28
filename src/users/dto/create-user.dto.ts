@@ -5,8 +5,8 @@ export class CreateUserDTO {
   @Length(USERNAME_LENGTH.min, USERNAME_LENGTH.max)
   username: string;
 
-  @IsOptional()
   @Length(USER_ABOUT_LENGTH.min, USER_ABOUT_LENGTH.max)
+  @IsOptional()
   about: string;
 
   @IsOptional()

@@ -11,3 +11,8 @@ export const USER_ABOUT_LENGTH = {
   min: 2,
   max: 200,
 }
+
+export const USER_PASSWORD_LENGTH = {
+  min: 2,
+  max: 16,
+}

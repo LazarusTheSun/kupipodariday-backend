@@ -36,7 +36,7 @@ export class AuthService {
         payload,
         { 
           secret: this.configService.get<string>("JWT_SECRET"),
-          expiresIn: '10m',
+          expiresIn: '60m',
         }
       )
     }
