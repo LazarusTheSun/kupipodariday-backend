@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/users/entities/users.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { IncorrectCredentialsException } from './exceptions/incorrect-credentials.exception';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,10 @@ export class AuthService {
   async validateUser(username: string, password: string) {
     const user = await this.usersService.findUserByUsername(username);
 
+    if (!user) {
+      throw new IncorrectCredentialsException();
+    }
+
     return bcrypt.compare(password, user.password)
       .then(arePaswordsMatched => {
         if (arePaswordsMatched) {
@@ -24,7 +29,7 @@ export class AuthService {
           return result;
         }
 
-        return null;
+        throw new IncorrectCredentialsException();
       })
   }
 
