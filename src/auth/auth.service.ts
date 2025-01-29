@@ -12,7 +12,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async validateUser(username: string, password: string) {
     const user = await this.usersService.findUserByUsername(username);
@@ -39,7 +39,7 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(
         payload,
-        { 
+        {
           secret: this.configService.get<string>("JWT_SECRET"),
           expiresIn: '60m',
         }

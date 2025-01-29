@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { User } from './users/entities/users.entity';
 import { AuthModule } from './auth/auth.module';
+import { WishlistsModule } from './wishlists/wishlists.module';
 
 @Module({
   imports: [
@@ -14,13 +14,12 @@ import { AuthModule } from './auth/auth.module';
       username: 'student',
       password: 'student',
       database: 'kupipodariday',
-      entities: [
-        User,
-      ],
+      autoLoadEntities: true,
       synchronize: true,
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    WishlistsModule
   ],
   controllers: [AppController],
   providers: [],

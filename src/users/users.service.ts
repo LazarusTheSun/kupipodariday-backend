@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>
-  ) {}
+  ) { }
 
   async create(createUserDTO: CreateUserDTO) {
     const { password } = createUserDTO;
@@ -34,7 +34,7 @@ export class UsersService {
       where: [
         { username: query },
         { email: query }
-      ] 
+      ]
     });
 
     return users;
@@ -63,7 +63,7 @@ export class UsersService {
     }
 
     const updatedUser = await this.usersRepository.save({
-      ...user, 
+      ...user,
       ...updateUserDTO
     });
 
