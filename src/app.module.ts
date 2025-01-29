@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
+import { WishesModule } from './wishes/wishes.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { WishlistsModule } from './wishlists/wishlists.module';
     }),
     UsersModule,
     AuthModule,
-    WishlistsModule
+    WishlistsModule,
+    WishesModule
   ],
   controllers: [AppController],
   providers: [],

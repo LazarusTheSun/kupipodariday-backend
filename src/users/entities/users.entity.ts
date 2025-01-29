@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK, USERNAME_LENGTH, USER_ABOUT_LENGTH, USER_PASSWORD_LENGTH } from './constants';
 import { Exclude } from 'class-transformer';
 import { Wishlist } from 'src/wishlists/entities/wishlists.entity';
+import { Wish } from 'src/wishes/entities/wishes.entity';
 
 @Entity()
 export class User {
@@ -48,5 +49,8 @@ export class User {
   password: string;
 
   @OneToMany(() => Wishlist, wishlist => wishlist.owner)
-  wishlists: Wishlist[]
+  wishlists: Wishlist[];
+
+  @OneToMany(() => Wish, wish => wish.owner)
+  wishes: Wish[];
 }
