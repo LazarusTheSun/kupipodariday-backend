@@ -5,6 +5,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { FindUsersDTO } from './dto/find-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,19 @@ export class UsersService {
 
         return this.usersRepository.save(user);
       })
+  }
+
+  async findUsers(findUsersDto: FindUsersDTO) {
+    const { query } = findUsersDto;
+
+    const users = await this.usersRepository.find({
+      where: [
+        { username: query },
+        { email: query }
+      ] 
+    });
+
+    return users;
   }
 
   async findUserByUsername(username: string) {
