@@ -1,4 +1,4 @@
-import { IsOptional, Length } from 'class-validator';
+import { IsOptional, Length, IsUrl } from 'class-validator';
 import { WISHLIST_NAME_LENGTH } from '../entities/constants';
 
 export class UpdateWishlistDTO {
@@ -7,5 +7,8 @@ export class UpdateWishlistDTO {
   name: string;
 
   @IsOptional()
+  @IsUrl({
+    require_protocol: true,
+  })
   image: string;
 }

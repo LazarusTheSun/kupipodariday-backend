@@ -1,4 +1,4 @@
-import { IsDate, Length } from 'class-validator';
+import { IsDate, Length, IsUrl } from 'class-validator';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { WISHLIST_NAME_LENGTH } from './constants';
 import { User } from 'src/users/entities/users.entity';
@@ -21,6 +21,9 @@ export class Wishlist {
   name: string;
 
   @Column()
+  @IsUrl({
+    require_protocol: true,
+  })
   image: string;
 
   @ManyToOne(() => User, user => user.wishlists)

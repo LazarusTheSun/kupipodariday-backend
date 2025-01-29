@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsOptional, Length } from 'class-validator';
+import { IsDate, IsEmail, IsUrl, IsOptional, Length } from 'class-validator';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK, USERNAME_LENGTH, USER_ABOUT_LENGTH, USER_PASSWORD_LENGTH } from './constants';
 import { Exclude } from 'class-transformer';
@@ -33,6 +33,9 @@ export class User {
 
   @Column({
     default: DEFAULT_USER_AVATART_LINK,
+  })
+  @IsUrl({
+    require_protocol: true,
   })
   avatar: string;
 
