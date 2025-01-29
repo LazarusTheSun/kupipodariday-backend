@@ -1,4 +1,4 @@
-import { IsFQDN, IsNumber, Length } from 'class-validator';
+import { IsNumber, Length, IsUrl } from 'class-validator';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { WISH_DESCRIPTION_LENGTH, WISH_MONEY_DECIMALS_PLACES, WISH_NAME_LENGTH } from './constants';
 import { User } from 'src/users/entities/users.entity';
@@ -19,11 +19,15 @@ export class Wish {
   name: string;
 
   @Column()
-  @IsFQDN()
+  @IsUrl({
+    require_protocol: true,
+  })
   link: string;
 
   @Column()
-  @IsFQDN()
+  @IsUrl({
+    require_protocol: true,
+  })
   image: string;
 
   @Column()
@@ -32,7 +36,9 @@ export class Wish {
   })
   price: number;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   @IsNumber({
     maxDecimalPlaces: WISH_MONEY_DECIMALS_PLACES
   })
@@ -45,6 +51,8 @@ export class Wish {
   @ManyToOne(() => User, user => user.wishes)
   owner: User;
 
-  @Column()
+  @Column({
+    default: 0,
+  })
   copied: number;
 }
