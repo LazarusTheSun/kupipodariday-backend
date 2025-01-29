@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wishlist } from './entities/wishlists.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateWishlistDTO } from './dto/create-wishlist.dto';
+import { UpdateWishlistDTO } from './dto/update-wishlist.dto';
 
 @Injectable()
 export class WishlistsService {
@@ -25,6 +26,35 @@ export class WishlistsService {
       ...createWishlistDTO,
       owner: user
     });
+
+    return wishlist;
+  }
+
+  async findOne(id: number) {
+    const wishlist = await this.wishlistsRepository.findOne({ where: { id } });
+
+    if (!wishlist) {
+      throw new NotFoundException('wishlist not found');
+    }
+
+    return wishlist;
+  }
+
+  async updateOne(updateWishlistDto: UpdateWishlistDTO, id: number) {
+    const wishlist = await this.findOne(id);
+
+    const updatedWishlist = await this.wishlistsRepository.save({
+      ...wishlist,
+      ...updateWishlistDto
+    });
+
+    return updatedWishlist;
+  }
+
+  async deleteOne(id: number) {
+    const wishlist = await this.findOne(id);
+    
+    await this.wishlistsRepository.delete(id);
 
     return wishlist;
   }
