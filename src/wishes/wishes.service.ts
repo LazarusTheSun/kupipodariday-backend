@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wishes.entity';
 import { Repository } from 'typeorm';
@@ -22,4 +22,37 @@ export class WishesService {
 
     return wish;
   }
+
+  // @todo remake method to use queries
+  async findWishes(queryKey: 'id' | 'username', value: string | number) {
+    const user = queryKey === 'id'
+      ? await this.usersService.findUserById(Number(value))
+      : await this.usersService.findUserByUsername(String(value));
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    const wishes = await this.wishesRepository.find({
+      where: {
+        owner: {
+          id: user.id
+        },
+      },
+    });
+
+    return wishes;
+  }
+
+  async findWishesByUserId(id: number) {
+    const wishes = await this.findWishes('id', id);
+
+    return wishes;
+  }
+
+  async findWishesByUsername(username: string) {
+    const wishes = await this.findWishes('username', username);
+
+    return wishes;
+  } 
 }

@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { FindUsersDTO } from './dto/find-users.dto';
 
+// @todo remake methods to use queries
 @Injectable()
 export class UsersService {
   constructor(
