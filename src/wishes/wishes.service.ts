@@ -15,7 +15,10 @@ export class WishesService {
   ) {}
 
   async createWish(createWishDto: CreateWishDTO, userId: number) {
-    const user = await this.usersService.findUserById(userId);
+    const user = await this.usersService.findUser({
+      field: 'id',
+      value: userId,
+    });
 
     const wish = await this.wishesRepository.save({
       ...createWishDto,
@@ -26,14 +29,8 @@ export class WishesService {
   }
 
   // @todo remake method to use queries
-  async findWishes(queryKey: 'id' | 'username', value: string | number) {
-    const user = queryKey === 'id'
-      ? await this.usersService.findUserById(Number(value))
-      : await this.usersService.findUserByUsername(String(value));
-
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
+  async findWishes(field: 'id' | 'username', value: string | number) {
+    const user = await this.usersService.findUser({ field, value })
 
     const wishes = await this.wishesRepository.find({
       where: {

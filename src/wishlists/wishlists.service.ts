@@ -20,7 +20,10 @@ export class WishlistsService {
   } 
 
   async createWishlist(createWishlistDTO: CreateWishlistDTO, userId: number) {
-    const user = await this.usersService.findUserById(userId);
+    const user = await this.usersService.findUser({
+      field: 'id',
+      value: userId,
+    })
     
     const wishlist = await this.wishlistsRepository.save({
       ...createWishlistDTO,

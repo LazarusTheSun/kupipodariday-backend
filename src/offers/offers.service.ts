@@ -29,7 +29,10 @@ export class OffersService {
   async createOffer(userId: number, createOfferDto: CreateOfferDTO) {
     const { itemId, amount, hidden } = createOfferDto;
 
-    const user = await this.usersService.findUserById(userId);
+    const user = await this.usersService.findUser({
+      field: 'id',
+      value: userId,
+    });
 
     if (!user) {
       throw new NotFoundException('user not found');

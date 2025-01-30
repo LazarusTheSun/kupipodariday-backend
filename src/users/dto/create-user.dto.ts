@@ -1,4 +1,4 @@
-import { IsEmail, Length, IsOptional, IsUrl } from 'class-validator';
+import { IsEmail, Length, IsOptional, IsUrl, MaxLength } from 'class-validator';
 import { USER_ABOUT_LENGTH, USERNAME_LENGTH } from '../entities/constants';
 
 export class CreateUserDTO {
@@ -6,7 +6,7 @@ export class CreateUserDTO {
   username: string;
 
   @IsOptional()
-  @Length(USER_ABOUT_LENGTH.min, USER_ABOUT_LENGTH.max)
+  @MaxLength(USER_ABOUT_LENGTH.max)
   about: string;
 
   @IsOptional()

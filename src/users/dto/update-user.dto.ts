@@ -1,4 +1,4 @@
-import { IsEmail, IsUrl, IsOptional, Length } from 'class-validator'
+import { IsEmail, IsUrl, IsOptional, Length, MaxLength } from 'class-validator'
 import { USER_ABOUT_LENGTH, USER_PASSWORD_LENGTH, USERNAME_LENGTH } from '../entities/constants';
 
 export class UpdateUserDTO {
@@ -6,7 +6,7 @@ export class UpdateUserDTO {
   @IsOptional()
   username: string;
 
-  @Length(USER_ABOUT_LENGTH.min, USER_ABOUT_LENGTH.max)
+  @MaxLength(USER_ABOUT_LENGTH.max)
   @IsOptional()
   about: string;
 

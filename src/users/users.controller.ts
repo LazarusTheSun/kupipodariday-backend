@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtGuard as AuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
@@ -9,28 +9,36 @@ import { FindUsersDTO } from './dto/find-users.dto';
 export class UsersController {
   constructor(
     private usersService: UsersService,
-  ) {}
+  ) { }
 
   @Get('me')
-  async getUser(@Req() req) {
-    const user = await this.usersService.findUserById(req.user.id);
+  async getAuthorizedUser(@Req() req) {
+    const user = await this.usersService.findUser({
+      field: 'id',
+      value: req.user.id,
+    });
 
     return user;
   }
 
   // @todo maybe move user search here and then call method to search for wishes
   @Get('me/wishes')
-  async findAuthorizeduserWishes(@Req() req) {
+  async findAuthorizedUserWishes(@Req() req) {
     const wishes = await this.usersService.findAuthorizedUserWishes(req.user.id);
 
     return wishes;
   }
 
   @Patch('me')
-  async updateUser(@Req() req, @Body() updateUserDTO: UpdateUserDTO) {
+  async updateAuthorizedUser(@Req() req, @Body() updateUserDTO: UpdateUserDTO) {
     const updatedUser = await this.usersService.updateUser(updateUserDTO, req.user.id);
 
     return updatedUser;
+  }
+
+  @Delete('me')
+  async deleteAuthorizedUser(@Req() req) {
+    return await this.usersService.deleteUser(req.user.id);
   }
 
   @Post('find')
@@ -42,7 +50,7 @@ export class UsersController {
 
   @Get(':username')
   async findAnotherUser(@Param('username') username: string) {
-    const user = await this.usersService.findUserByUsername(username);
+    const user = await this.usersService.findUser({ field: 'username', value: username });
 
     return user;
   }

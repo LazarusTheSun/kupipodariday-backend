@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { FindUsersDTO } from './dto/find-users.dto';
 import { WishesService } from 'src/wishes/wishes.service';
+import { FindUserDTO } from './dto/find-user.dto';
 
 // @todo remake methods to use queries
 @Injectable()
@@ -43,20 +44,33 @@ export class UsersService {
     return users;
   }
 
-  async findUserByUsername(username: string) {
-    const user = await this.usersRepository.findOneBy({ username });
+  async findUser(findUserDto: FindUserDTO, keepPassword = false) {
+    const { field, value } = findUserDto;
 
-    return user;
-  }
+    const castedValue = field === 'username' ? String(value) : Number(value);
 
-  async findUserById(id: number) {
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.usersRepository.findOne({
+      where: {
+        [field]: castedValue,
+      }
+    });
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    if (!keepPassword) {
+      delete user.password;
+    }
 
     return user;
   }
 
   async updateUser(updateUserDTO: UpdateUserDTO, userId: number) {
-    const user = await this.findUserById(userId);
+    const user = await this.findUser({
+      field: 'id',
+      value: userId,
+    });
 
     if (updateUserDTO.password !== undefined) {
       await bcrypt.hash(updateUserDTO.password, 10)
@@ -85,5 +99,13 @@ export class UsersService {
       const wishes = await this.wishesService.findWishesByUsername(username);
   
       return wishes;
-    }
+  }
+
+  async deleteUser(userId: number) {
+    await this.usersRepository.delete({
+      id: userId,
+    });
+
+    return {};
+  }
 }

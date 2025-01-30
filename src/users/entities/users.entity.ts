@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsUrl, IsOptional, Length } from 'class-validator';
+import { IsDate, IsEmail, IsUrl, IsOptional, Length, MaxLength } from 'class-validator';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK, USERNAME_LENGTH, USER_ABOUT_LENGTH, USER_PASSWORD_LENGTH } from './constants';
 import { Exclude } from 'class-transformer';
@@ -30,7 +30,7 @@ export class User {
     default: DEFAULT_USER_DESCRIPTION
   })
   @IsOptional()
-  @Length(USER_ABOUT_LENGTH.min, USER_ABOUT_LENGTH.max)
+  @MaxLength(USER_ABOUT_LENGTH.max)
   about: string;
 
   @Column({
