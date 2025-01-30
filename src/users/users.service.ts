@@ -6,13 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { FindUsersDTO } from './dto/find-users.dto';
+import { WishesService } from 'src/wishes/wishes.service';
 
 // @todo remake methods to use queries
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
+    private wishesService: WishesService,
   ) { }
 
   async create(createUserDTO: CreateUserDTO) {
@@ -72,4 +74,16 @@ export class UsersService {
 
     return updatedUser;
   }
+
+  async findAuthorizedUserWishes(userId: number) {
+    const wishes = await this.wishesService.findWishesByUserId(userId);
+
+    return wishes;
+  }
+
+  async findAnotherUserWishes(username: string) {
+      const wishes = await this.wishesService.findWishesByUsername(username);
+  
+      return wishes;
+    }
 }

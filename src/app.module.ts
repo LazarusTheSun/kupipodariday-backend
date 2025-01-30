@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
@@ -19,11 +19,11 @@ import { OffersModule } from './offers/offers.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    UsersModule,
+    forwardRef(() => UsersModule),
     AuthModule,
     WishlistsModule,
-    WishesModule,
-    OffersModule
+    forwardRef(() => WishesModule),
+    forwardRef(() => OffersModule),
   ],
   controllers: [AppController],
   providers: [],

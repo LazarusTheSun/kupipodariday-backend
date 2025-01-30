@@ -3,14 +3,12 @@ import { UsersService } from './users.service';
 import { JwtGuard as AuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { FindUsersDTO } from './dto/find-users.dto';
-import { WishesService } from 'src/wishes/wishes.service';
 
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
     private usersService: UsersService,
-    private wishesService: WishesService,
   ) {}
 
   @Get('me')
@@ -23,7 +21,7 @@ export class UsersController {
   // @todo maybe move user search here and then call method to search for wishes
   @Get('me/wishes')
   async findAuthorizeduserWishes(@Req() req) {
-    const wishes = await this.wishesService.findWishesByUserId(req.user.id);
+    const wishes = await this.usersService.findAuthorizedUserWishes(req.user.id);
 
     return wishes;
   }
@@ -51,7 +49,7 @@ export class UsersController {
 
   @Get(':username/wishes')
   async findAnotherUserWishes(@Param('username') username: string) {
-    const wishes = await this.wishesService.findWishesByUsername(username);
+    const wishes = await this.usersService.findAnotherUserWishes(username);
 
     return wishes;
   }
