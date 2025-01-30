@@ -5,6 +5,7 @@ import { Exclude } from 'class-transformer';
 import { Wishlist } from 'src/wishlists/entities/wishlists.entity';
 import { Wish } from 'src/wishes/entities/wishes.entity';
 
+// @todo remove password from responses
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

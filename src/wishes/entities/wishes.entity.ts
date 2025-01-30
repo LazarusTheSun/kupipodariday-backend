@@ -48,7 +48,7 @@ export class Wish {
   @Length(WISH_DESCRIPTION_LENGTH.min, WISH_DESCRIPTION_LENGTH.max)
   description: string;
 
-  @ManyToOne(() => User, user => user.wishes)
+  @ManyToOne(() => User, user => user.wishes, { eager: true })
   owner: User;
 
   @Column({

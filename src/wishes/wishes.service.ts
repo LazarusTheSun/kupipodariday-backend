@@ -54,5 +54,11 @@ export class WishesService {
     const wishes = await this.findWishes('username', username);
 
     return wishes;
-  } 
+  }
+
+  async findWish(id: number) {
+    const wish = await this.wishesRepository.findOne({ where: { id, } });
+
+    return wish;
+  }
 }

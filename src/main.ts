@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
+// @todo add request validation for same user fro some methods
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
