@@ -52,6 +52,11 @@ export class UsersService {
     const user = await this.usersRepository.findOne({
       where: {
         [field]: castedValue,
+      },
+      relations: {
+        offers: true,
+        wishes: true,
+        wishlists: true,
       }
     });
 
@@ -90,13 +95,19 @@ export class UsersService {
   }
 
   async findAuthorizedUserWishes(userId: number) {
-    const wishes = await this.wishesService.findWishesByUserId(userId);
+    const wishes = await this.wishesService.findWishes({
+      field: 'id',
+      value: userId,
+    });
 
     return wishes;
   }
 
   async findAnotherUserWishes(username: string) {
-      const wishes = await this.wishesService.findWishesByUsername(username);
+      const wishes = await this.wishesService.findWishes({
+        field: 'username',
+        value: username,
+      });
   
       return wishes;
   }
