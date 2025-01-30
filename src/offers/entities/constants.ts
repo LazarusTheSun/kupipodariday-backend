@@ -1,0 +1,1 @@
+export const OFFER_AMOUNT_DECIMAL_PLACES = 2;

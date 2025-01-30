@@ -1,7 +1,8 @@
 import { IsNumber, Length, IsUrl } from 'class-validator';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { WISH_DESCRIPTION_LENGTH, WISH_MONEY_DECIMALS_PLACES, WISH_NAME_LENGTH } from './constants';
 import { User } from 'src/users/entities/users.entity';
+import { Offer } from 'src/offers/entities/offers.entity';
 
 @Entity()
 export class Wish {
@@ -50,6 +51,9 @@ export class Wish {
 
   @ManyToOne(() => User, user => user.wishes, { eager: true })
   owner: User;
+
+  @OneToMany(() => Offer, offer => offer.item)
+  offers: Offer[];
 
   @Column({
     default: 0,

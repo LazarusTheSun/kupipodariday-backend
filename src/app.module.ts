@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 import { WishesModule } from './wishes/wishes.module';
+import { OffersModule } from './offers/offers.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { WishesModule } from './wishes/wishes.module';
     UsersModule,
     AuthModule,
     WishlistsModule,
-    WishesModule
+    WishesModule,
+    OffersModule
   ],
   controllers: [AppController],
   providers: [],

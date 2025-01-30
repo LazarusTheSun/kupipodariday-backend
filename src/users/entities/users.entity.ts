@@ -4,6 +4,7 @@ import { DEFAULT_USER_DESCRIPTION, DEFAULT_USER_AVATART_LINK, USERNAME_LENGTH, U
 import { Exclude } from 'class-transformer';
 import { Wishlist } from 'src/wishlists/entities/wishlists.entity';
 import { Wish } from 'src/wishes/entities/wishes.entity';
+import { Offer } from 'src/offers/entities/offers.entity';
 
 // @todo remove password from responses
 @Entity()
@@ -57,4 +58,7 @@ export class User {
 
   @OneToMany(() => Wish, wish => wish.owner)
   wishes: Wish[];
+
+  @OneToMany(() => Offer, offer => offer.user)
+  offers: Offer[];
 }
