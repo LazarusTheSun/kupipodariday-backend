@@ -1,7 +1,8 @@
 import { IsDate, Length, IsUrl } from 'class-validator';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { WISHLIST_NAME_LENGTH } from './constants';
 import { User } from 'src/users/entities/users.entity';
+import { Wish } from 'src/wishes/entities/wishes.entity';
 
 @Entity()
 export class Wishlist {
@@ -28,4 +29,8 @@ export class Wishlist {
 
   @ManyToOne(() => User, user => user.wishlists, { eager: true })
   owner: User;
+
+  @ManyToMany(() => Wish, {eager: true})
+  @JoinTable()
+  items: Wish[]
 }

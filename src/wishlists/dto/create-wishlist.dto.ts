@@ -9,4 +9,6 @@ export class CreateWishlistDTO {
     require_protocol: true,
   })
   image: string;
+
+  itemsId: number[];
 }

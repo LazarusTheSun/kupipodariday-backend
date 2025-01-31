@@ -1,8 +1,9 @@
 import { IsNumber, Length, IsUrl } from 'class-validator';
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { WISH_DESCRIPTION_LENGTH, WISH_MONEY_DECIMALS_PLACES, WISH_NAME_LENGTH } from './constants';
 import { User } from 'src/users/entities/users.entity';
 import { Offer } from 'src/offers/entities/offers.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlists.entity';
 
 @Entity()
 export class Wish {
@@ -59,4 +60,7 @@ export class Wish {
     default: 0,
   })
   copied: number;
+
+  @ManyToMany(() => Wishlist)
+  wishlists: Wishlist[]
 }

@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wishes.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { DataSource, In, MoreThan, Repository } from 'typeorm';
 import { CreateWishDTO } from './dto/create-wish.dto';
 import { UsersService } from 'src/users/users.service';
 import { FindUserDTO } from 'src/users/dto/find-user.dto';
@@ -10,6 +10,7 @@ import { UpdateWishDTO } from './dto/update-wish.dto';
 @Injectable()
 export class WishesService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(Wish) private wishesRepository: Repository<Wish>,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
   ) {}
@@ -23,6 +24,16 @@ export class WishesService {
     });
 
     return wish;
+  }
+
+  async findWishesByIds(ids: number[]) {
+    const wishes = await this.wishesRepository.find({
+      where: {
+        id: In(ids)
+      }
+    });
+
+    return wishes;
   }
 
   async findWishes(findUserDto: FindUserDTO) {
@@ -119,17 +130,32 @@ export class WishesService {
   }
 
   async copyWish(wishId: number, findUserDto: FindUserDTO) {
-    const user = await this.usersService.findUser(findUserDto);
-
-    if (!user.wishlists.length) {
-      throw new BadRequestException('you have no wishlists');
-    }
-
     const existingWish = await this.findWish(wishId);
     const { name, description, link, image, price } = existingWish;
 
-    await this.createWish({name, description, link, image, price}, findUserDto);
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await Promise.all([
+        this.incrementSourceWishCopy(existingWish),
+        this.createWish({name, description, link, image, price}, findUserDto),
+      ]);
+    } catch(_) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
 
     return {}
+  }
+
+  async incrementSourceWishCopy(wish: Wish) {
+    await this.wishesRepository.save({
+      ...wish,
+      copied: wish.copied + 1
+    })
   }
 }

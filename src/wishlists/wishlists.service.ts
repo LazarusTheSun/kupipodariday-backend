@@ -6,12 +6,14 @@ import { UsersService } from 'src/users/users.service';
 import { CreateWishlistDTO } from './dto/create-wishlist.dto';
 import { UpdateWishlistDTO } from './dto/update-wishlist.dto';
 import { FindUserDTO } from 'src/users/dto/find-user.dto';
+import { WishesService } from 'src/wishes/wishes.service';
 
 @Injectable()
 export class WishlistsService {
   constructor(
     @InjectRepository(Wishlist) private wishlistsRepository: Repository<Wishlist>,
     private usersService: UsersService,
+    private wishesService: WishesService,
   ) {}
 
   async findAll() {
@@ -24,11 +26,14 @@ export class WishlistsService {
     const user = await this.usersService.findUser({
       field: 'id',
       value: userId,
-    })
-    
+    });
+
+    const wishes = await this.wishesService.findWishesByIds(createWishlistDTO.itemsId);
+
     const wishlist = await this.wishlistsRepository.save({
       ...createWishlistDTO,
-      owner: user
+      owner: user,
+      items: wishes,
     });
 
     return wishlist;
