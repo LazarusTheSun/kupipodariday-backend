@@ -21,7 +21,6 @@ export class UsersController {
     return user;
   }
 
-  // @todo maybe move user search here and then call method to search for wishes
   @Get('me/wishes')
   async findAuthorizedUserWishes(@Req() req) {
     const wishes = await this.usersService.findAuthorizedUserWishes(req.user.id);

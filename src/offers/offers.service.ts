@@ -1,10 +1,11 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOfferDTO } from './dto/create-offer.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Offer } from './entities/offers.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { FindUserDTO } from 'src/users/dto/find-user.dto';
 
 @Injectable()
 export class OffersService {
@@ -12,7 +13,7 @@ export class OffersService {
     @InjectRepository(Offer) private offersRepository: Repository<Offer>,
     @Inject(forwardRef(() => WishesService)) private wishesService: WishesService,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
-  ) {}
+  ) { }
 
   async findOffers() {
     const offers = await this.offersRepository.find();
@@ -34,29 +35,26 @@ export class OffersService {
     return offer;
   }
 
-  async createOffer(userId: number, createOfferDto: CreateOfferDTO) {
+  async createOffer(createOfferDto: CreateOfferDTO, findUserDto: FindUserDTO) {
     const { itemId, amount, hidden } = createOfferDto;
 
-    const user = await this.usersService.findUser({
-      field: 'id',
-      value: userId
-    });
-
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
-
+    const user = await this.usersService.findUser(findUserDto);
     const wish = await this.wishesService.findWish(itemId);
 
-    if (!wish) {
-      throw new NotFoundException('wish not found');
+    if (user.id === wish.owner.id) {
+      throw new BadRequestException('you cannot make an offer to yourself');
     }
 
-    return await this.offersRepository.save({
+    await this.offersRepository.save({
       amount,
       hidden,
       item: wish,
       user,
-    })
+    });
+
+    const {moneyRaised, wishId} = await this.wishesService.calcMoneyRaised(itemId);
+    await this.wishesService.setRaisedMoney(wishId, moneyRaised);
+
+    return {};
   }
 }

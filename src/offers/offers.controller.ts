@@ -10,7 +10,10 @@ export class OffersController {
 
   @Post()
   async create(@Req() req, @Body() createOfferDto: CreateOfferDTO) {
-    return await this.offersService.createOffer(req.user.id, createOfferDto);
+    return await this.offersService.createOffer(createOfferDto, {
+      field: 'id',
+      value: req.user.id,
+    });
   }
 
   @Get()

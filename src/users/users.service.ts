@@ -9,7 +9,6 @@ import { FindUsersDTO } from './dto/find-users.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { FindUserDTO } from './dto/find-user.dto';
 
-// @todo remake methods to use queries
 @Injectable()
 export class UsersService {
   constructor(

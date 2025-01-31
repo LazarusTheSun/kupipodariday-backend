@@ -6,6 +6,8 @@ import { CreateWishDTO } from './dto/create-wish.dto';
 import { UsersService } from 'src/users/users.service';
 import { FindUserDTO } from 'src/users/dto/find-user.dto';
 import { UpdateWishDTO } from './dto/update-wish.dto';
+import { User } from 'src/users/entities/users.entity';
+import { Offer } from 'src/offers/entities/offers.entity';
 
 @Injectable()
 export class WishesService {
@@ -13,7 +15,7 @@ export class WishesService {
     private dataSource: DataSource,
     @InjectRepository(Wish) private wishesRepository: Repository<Wish>,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
-  ) {}
+  ) { }
 
   async createWish(createWishDto: CreateWishDTO, findUserDto: FindUserDTO) {
     const user = await this.usersService.findUser(findUserDto);
@@ -96,13 +98,7 @@ export class WishesService {
     const wish = await this.findWish(wishId);
     const user = await this.usersService.findUser(findUserDto);
 
-    if (user.id !== wish.owner.id) {
-      throw new ForbiddenException('you cannot update a wish of another user');
-    }
-
-    if (wish.raised) {
-      throw new BadRequestException('you cannot update a wish with some money already raised');
-    }
+    this.checkWish(wish, user, 'update');
 
     const updatedWish = this.wishesRepository.save({
       ...wish,
@@ -116,17 +112,21 @@ export class WishesService {
     const wish = await this.findWish(wishId);
     const user = await this.usersService.findUser(findUserDto);
 
-    if (user.id !== wish.owner.id) {
-      throw new ForbiddenException('you cannot delete a wish of another user');
-    }
-
-    if (wish.raised) {
-      throw new BadRequestException('you cannot delete a wish with some money already raised');
-    }
+    this.checkWish(wish, user, 'delete');
 
     await this.wishesRepository.delete(wishId);
 
     return {}
+  }
+
+  checkWish(wish: Wish, user: User, method: 'delete' | 'update') {
+    if (user.id !== wish.owner.id) {
+      throw new ForbiddenException(`you cannot ${method} a wish of another user`);
+    }
+
+    if (wish?.raised > 0) {
+      throw new BadRequestException(`you cannot ${method} a wish with some money already raised`);
+    }
   }
 
   async copyWish(wishId: number, findUserDto: FindUserDTO) {
@@ -141,9 +141,11 @@ export class WishesService {
     try {
       await Promise.all([
         this.incrementSourceWishCopy(existingWish),
-        this.createWish({name, description, link, image, price}, findUserDto),
+        this.createWish({ name, description, link, image, price }, findUserDto),
       ]);
-    } catch(_) {
+
+      await queryRunner.commitTransaction();
+    } catch (_) {
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
@@ -157,5 +159,25 @@ export class WishesService {
       ...wish,
       copied: wish.copied + 1
     })
+  }
+
+  async calcMoneyRaised(wishId: number) {
+    const wish = await this.findWish(wishId);
+
+    const moneyRaised = wish.offers.reduce((acc: number, offer: Offer) => acc + offer.amount, 0);
+
+    return {
+      moneyRaised,
+      wishId,
+    };
+  }
+
+  async setRaisedMoney(wishId: number, raisedMoney: number) {
+    const wish = await this.findWish(wishId);
+
+    await this.wishesRepository.save({
+      ...wish,
+      raised: raisedMoney,
+    });
   }
 }
