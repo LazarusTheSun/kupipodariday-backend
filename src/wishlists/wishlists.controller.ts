@@ -31,15 +31,21 @@ export class WishlistsController {
   }
 
   @Patch(':id')
-  async updateOne(@Param('id') id: number, @Body() updateWishlistDto: UpdateWishlistDTO) {
-    const updatedWishlist = await this.wishlistsService.updateOne(updateWishlistDto, id);
+  async updateOne(@Req() req, @Param('id') id: number, @Body() updateWishlistDto: UpdateWishlistDTO) {
+    const updatedWishlist = await this.wishlistsService.updateOne(updateWishlistDto, id, {
+      field: 'id',
+      value: req.user.id,
+    });
 
     return updatedWishlist;
   }
 
   @Delete(':id')
-  async deleteOne(@Param('id') id: number) {
-    const deletedWishlist = await this.wishlistsService.deleteOne(id);
+  async deleteOne(@Req() req, @Param('id') id: number) {
+    const deletedWishlist = await this.wishlistsService.deleteOne(id, {
+      field: 'id',
+      value: req.user.id,
+    });
 
     return deletedWishlist;
   }

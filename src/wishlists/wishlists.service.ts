@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wishlist } from './entities/wishlists.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateWishlistDTO } from './dto/create-wishlist.dto';
 import { UpdateWishlistDTO } from './dto/update-wishlist.dto';
+import { FindUserDTO } from 'src/users/dto/find-user.dto';
 
 @Injectable()
 export class WishlistsService {
@@ -43,8 +44,14 @@ export class WishlistsService {
     return wishlist;
   }
 
-  async updateOne(updateWishlistDto: UpdateWishlistDTO, id: number) {
-    const wishlist = await this.findOne(id);
+  async updateOne(updateWishlistDto: UpdateWishlistDTO, wishlistId: number, findUserDto: FindUserDTO) {
+    const wishlist = await this.findOne(wishlistId);
+
+    const user = await this.usersService.findUser(findUserDto);
+
+    if (wishlist.owner.id !== user.id) {
+      throw new ForbiddenException('you cannot edit wishlist of another user');
+    }
 
     const updatedWishlist = await this.wishlistsRepository.save({
       ...wishlist,
@@ -54,8 +61,14 @@ export class WishlistsService {
     return updatedWishlist;
   }
 
-  async deleteOne(id: number) {
+  async deleteOne(id: number, findUserDto: FindUserDTO) {
     const wishlist = await this.findOne(id);
+
+    const user = await this.usersService.findUser(findUserDto);
+
+    if (wishlist.owner.id !== user.id) {
+      throw new ForbiddenException('you cannot edit wishlist of another user');
+    }
     
     await this.wishlistsRepository.delete(id);
 

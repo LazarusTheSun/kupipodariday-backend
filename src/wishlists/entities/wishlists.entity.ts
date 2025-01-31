@@ -26,6 +26,6 @@ export class Wishlist {
   })
   image: string;
 
-  @ManyToOne(() => User, user => user.wishlists)
+  @ManyToOne(() => User, user => user.wishlists, { eager: true })
   owner: User;
 }
