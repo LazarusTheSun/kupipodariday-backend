@@ -43,7 +43,7 @@ export class UsersService {
     return users;
   }
 
-  async findUser(findUserDto: FindUserDTO, keepPassword = false) {
+  async findUser(findUserDto: FindUserDTO, selectColumns = { password: false,  email: false, }) {
     const { field, value } = findUserDto;
 
     const castedValue = field === 'username' ? String(value) : Number(value);
@@ -51,6 +51,15 @@ export class UsersService {
     const user = await this.usersRepository.findOne({
       where: {
         [field]: castedValue,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        username: true,
+        about: true,
+        avatar: true,
+        ...selectColumns,
       },
       relations: {
         offers: true,
@@ -61,10 +70,6 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException('user not found');
-    }
-
-    if (!keepPassword) {
-      delete user.password;
     }
 
     return user;

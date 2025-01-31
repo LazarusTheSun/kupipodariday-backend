@@ -15,7 +15,10 @@ export class AuthService {
   ) { }
 
   async validateUser(username: string, password: string) {
-    const user = await this.usersService.findUser({ field: 'username', value: username }, true);
+    const user = await this.usersService.findUser(
+      { field: 'username', value: username },
+      { email: true, password: true }
+    );
 
     if (!user) {
       throw new IncorrectCredentialsException();

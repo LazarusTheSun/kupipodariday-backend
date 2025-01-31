@@ -133,6 +133,10 @@ export class WishesService {
     const existingWish = await this.findWish(wishId);
     const { name, description, link, image, price } = existingWish;
 
+    if (findUserDto.field === 'id' && findUserDto.value === existingWish.owner.id ) {
+      throw new BadRequestException('you cannot copy your own wish');
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -155,10 +159,7 @@ export class WishesService {
   }
 
   async incrementSourceWishCopy(wish: Wish) {
-    await this.wishesRepository.save({
-      ...wish,
-      copied: wish.copied + 1
-    })
+    await this.wishesRepository.increment({id: wish.id}, 'copied', 1);
   }
 
   async calcMoneyRaised(wishId: number) {
