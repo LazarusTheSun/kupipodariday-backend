@@ -14,16 +14,24 @@ export class OffersService {
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
   ) {}
 
-  async findOffers(wishId: number) {
-    const offers = await this.offersRepository.find({
+  async findOffers() {
+    const offers = await this.offersRepository.find();
+
+    return offers;
+  }
+
+  async findOffer(offerId: number) {
+    const offer = await this.offersRepository.findOne({
       where: {
-        item: {
-          id: wishId
-        }
+        id: offerId
       }
     });
 
-    return offers;
+    if (!offer) {
+      throw new NotFoundException('offer not found');
+    }
+
+    return offer;
   }
 
   async createOffer(userId: number, createOfferDto: CreateOfferDTO) {
@@ -31,7 +39,7 @@ export class OffersService {
 
     const user = await this.usersService.findUser({
       field: 'id',
-      value: userId,
+      value: userId
     });
 
     if (!user) {
