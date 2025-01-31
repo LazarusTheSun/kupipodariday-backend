@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wishes.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { CreateWishDTO } from './dto/create-wish.dto';
 import { UsersService } from 'src/users/users.service';
 import { FindUserDTO } from 'src/users/dto/find-user.dto';
@@ -34,6 +34,31 @@ export class WishesService {
           id: user.id
         },
       },
+    });
+
+    return wishes;
+  }
+
+  async findMostRecentWishes() {
+    const wishes = await this.wishesRepository.find({
+      take: 40,
+      order: {
+        createdAt: 'DESC',
+      }
+    });
+
+    return wishes;
+  }
+
+  async findTopWishes() {
+    const wishes = await this.wishesRepository.find({
+      take: 20,
+      order: {
+        copied: 'DESC',
+      },
+      where: {
+        copied: MoreThan(0),
+      }
     });
 
     return wishes;

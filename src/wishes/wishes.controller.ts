@@ -19,6 +19,30 @@ export class WishesController {
     return wish;
   }
 
+  @Get('last')
+  async findMostRecentWishes() {
+    const wishes = await this.wishesService.findMostRecentWishes();
+
+    return wishes;
+  }
+
+  @Get('top')
+  async findTopWishes() {
+    const wishes = await this.wishesService.findTopWishes();
+
+    return wishes;
+  }
+
+  @Post(':id/copy')
+  async copyWish(@Req() req, @Param() params: any) {
+    const copiedWish = await this.wishesService.copyWish(params.id, {
+      field: 'id',
+      value: req.user.id,
+    });
+
+    return copiedWish;
+  }
+
   @Get(':id')
   async findWish(@Param('id') id: number) {
     const wish = await this.wishesService.findWish(id);
@@ -39,15 +63,5 @@ export class WishesController {
     const updatedWish = await this.wishesService.updateWish(id, updateWishDto, { field: 'id', value: req.user.id });
 
     return updatedWish;
-  }
-
-  @Post(':id/copy')
-  async copyWish(@Req() req, @Param(':id') id: number) {
-    const copiedWish = await this.wishesService.copyWish(id, {
-      field: 'id',
-      value: req.user.id,
-    });
-
-    return copiedWish;
   }
 }
