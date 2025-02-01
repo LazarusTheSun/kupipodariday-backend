@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -80,6 +80,22 @@ export class UsersService {
       field: 'id',
       value: userId,
     });
+
+    if (updateUserDTO?.email !== undefined) {
+      const isUserExists = await this.usersRepository.existsBy({email: updateUserDTO.email});
+
+      if (isUserExists) {
+        throw new BadRequestException('user with given email already exists');
+      }
+    }
+
+    if (updateUserDTO?.username !== undefined) {
+      const isUserExists = await this.usersRepository.existsBy({username: updateUserDTO.username});
+
+      if (isUserExists) {
+        throw new BadRequestException('user with given username already exists');
+      }
+    }
 
     if (updateUserDTO.password !== undefined) {
       await bcrypt.hash(updateUserDTO.password, 10)
