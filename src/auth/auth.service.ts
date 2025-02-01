@@ -27,9 +27,9 @@ export class AuthService {
     return bcrypt.compare(password, user.password)
       .then(arePaswordsMatched => {
         if (arePaswordsMatched) {
-          const { password, ...result } = user;
+          delete user.password;
 
-          return result;
+          return user;
         }
 
         throw new IncorrectCredentialsException();
