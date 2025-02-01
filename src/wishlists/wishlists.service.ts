@@ -17,9 +17,7 @@ export class WishlistsService {
   ) {}
 
   async findAll() {
-    const wishlists = await this.wishlistsRepository.find();
-
-    return wishlists;
+    return await this.wishlistsRepository.find();
   } 
 
   async createWishlist(createWishlistDTO: CreateWishlistDTO, userId: number) {
@@ -30,13 +28,11 @@ export class WishlistsService {
 
     const wishes = await this.wishesService.findWishesByIds(createWishlistDTO.itemsId);
 
-    const wishlist = await this.wishlistsRepository.save({
+    return await this.wishlistsRepository.save({
       ...createWishlistDTO,
       owner: user,
       items: wishes,
     });
-
-    return wishlist;
   }
 
   async findOne(id: number) {
@@ -58,12 +54,10 @@ export class WishlistsService {
       throw new ForbiddenException('you cannot edit wishlist of another user');
     }
 
-    const updatedWishlist = await this.wishlistsRepository.save({
+    return await this.wishlistsRepository.save({
       ...wishlist,
       ...updateWishlistDto
     });
-
-    return updatedWishlist;
   }
 
   async deleteOne(id: number, findUserDto: FindUserDTO) {

@@ -20,51 +20,39 @@ export class WishesService {
   async createWish(createWishDto: CreateWishDTO, findUserDto: FindUserDTO) {
     const user = await this.usersService.findUser(findUserDto);
 
-    const wish = await this.wishesRepository.save({
+    return await this.wishesRepository.save({
       ...createWishDto,
       owner: user,
     });
-
-    return wish;
   }
 
   async findWishesByIds(ids: number[]) {
-    const wishes = await this.wishesRepository.find({
-      where: {
-        id: In(ids)
-      }
-    });
-
-    return wishes;
+    return await this.wishesRepository.findBy({ id: In(ids) });
   }
 
   async findWishes(findUserDto: FindUserDTO) {
     const user = await this.usersService.findUser(findUserDto);
 
-    const wishes = await this.wishesRepository.find({
+    return await this.wishesRepository.find({
       where: {
         owner: {
           id: user.id
         },
       },
     });
-
-    return wishes;
   }
 
   async findMostRecentWishes() {
-    const wishes = await this.wishesRepository.find({
+    return await this.wishesRepository.find({
       take: 40,
       order: {
         createdAt: 'DESC',
       }
     });
-
-    return wishes;
   }
 
   async findTopWishes() {
-    const wishes = await this.wishesRepository.find({
+    return await this.wishesRepository.find({
       take: 20,
       order: {
         copied: 'DESC',
@@ -73,8 +61,6 @@ export class WishesService {
         copied: MoreThan(0),
       }
     });
-
-    return wishes;
   }
 
   async findWish(wishId: number) {
@@ -100,12 +86,10 @@ export class WishesService {
 
     this.checkWish(wish, user, 'update');
 
-    const updatedWish = this.wishesRepository.save({
+    return this.wishesRepository.save({
       ...wish,
       ...updateWishDto,
     });
-
-    return updatedWish;
   }
 
   async deleteWish(wishId: number, findUserDto: FindUserDTO) {

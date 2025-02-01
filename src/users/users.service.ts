@@ -43,7 +43,7 @@ export class UsersService {
     return users;
   }
 
-  async findUser(findUserDto: FindUserDTO, selectColumns = { password: false,  email: false, }) {
+  async findUser(findUserDto: FindUserDTO, selectColumns = { password: false, email: false, }) {
     const { field, value } = findUserDto;
 
     const castedValue = field === 'username' ? String(value) : Number(value);
@@ -82,7 +82,7 @@ export class UsersService {
     });
 
     if (updateUserDTO?.email !== undefined) {
-      const isUserExists = await this.usersRepository.existsBy({email: updateUserDTO.email});
+      const isUserExists = await this.usersRepository.existsBy({ email: updateUserDTO.email });
 
       if (isUserExists) {
         throw new BadRequestException('user with given email already exists');
@@ -90,7 +90,7 @@ export class UsersService {
     }
 
     if (updateUserDTO?.username !== undefined) {
-      const isUserExists = await this.usersRepository.existsBy({username: updateUserDTO.username});
+      const isUserExists = await this.usersRepository.existsBy({ username: updateUserDTO.username });
 
       if (isUserExists) {
         throw new BadRequestException('user with given username already exists');
@@ -115,21 +115,17 @@ export class UsersService {
   }
 
   async findAuthorizedUserWishes(userId: number) {
-    const wishes = await this.wishesService.findWishes({
+    return await this.wishesService.findWishes({
       field: 'id',
       value: userId,
     });
-
-    return wishes;
   }
 
   async findAnotherUserWishes(username: string) {
-      const wishes = await this.wishesService.findWishes({
-        field: 'username',
-        value: username,
-      });
-  
-      return wishes;
+    return await this.wishesService.findWishes({
+      field: 'username',
+      value: username,
+    });
   }
 
   async deleteUser(userId: number) {

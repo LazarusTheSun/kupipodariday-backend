@@ -16,9 +16,7 @@ export class OffersService {
   ) { }
 
   async findOffers() {
-    const offers = await this.offersRepository.find();
-
-    return offers;
+    return await this.offersRepository.find();
   }
 
   async findOffer(offerId: number) {
