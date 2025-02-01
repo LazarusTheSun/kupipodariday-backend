@@ -13,26 +13,20 @@ export class UsersController {
 
   @Get('me')
   async getAuthorizedUser(@Req() req) {
-    const user = await this.usersService.findUser({
+    return await this.usersService.findUser({
       field: 'id',
       value: req.user.id,
     });
-
-    return user;
   }
 
   @Get('me/wishes')
   async findAuthorizedUserWishes(@Req() req) {
-    const wishes = await this.usersService.findAuthorizedUserWishes(req.user.id);
-
-    return wishes;
+    return await this.usersService.findAuthorizedUserWishes(req.user.id);
   }
 
   @Patch('me')
   async updateAuthorizedUser(@Req() req, @Body() updateUserDTO: UpdateUserDTO) {
-    const updatedUser = await this.usersService.updateUser(updateUserDTO, req.user.id);
-
-    return updatedUser;
+    return await this.usersService.updateUser(updateUserDTO, req.user.id);
   }
 
   @Delete('me')
@@ -42,22 +36,16 @@ export class UsersController {
 
   @Post('find')
   async findUsers(@Body() findUsersDto: FindUsersDTO) {
-    const user = await this.usersService.findUsers(findUsersDto);
-
-    return user;
+    return await this.usersService.findUsers(findUsersDto);
   }
 
   @Get(':username')
   async findAnotherUser(@Param('username') username: string) {
-    const user = await this.usersService.findUser({ field: 'username', value: username });
-
-    return user;
+    return await this.usersService.findUser({ field: 'username', value: username });
   }
 
   @Get(':username/wishes')
   async findAnotherUserWishes(@Param('username') username: string) {
-    const wishes = await this.usersService.findAnotherUserWishes(username);
-
-    return wishes;
+    return await this.usersService.findAnotherUserWishes(username);
   }
 }

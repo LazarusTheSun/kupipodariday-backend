@@ -11,42 +11,32 @@ export class WishlistsController {
 
   @Get()
   async findAll() {
-    const wishlists = await this.wishlistsService.findAll();
-
-    return wishlists;
+    return await this.wishlistsService.findAll();
   }
 
   @Post()
   async create(@Req() req, @Body() createWishlistDto: CreateWishlistDTO) {
-    const wishlist = await this.wishlistsService.createWishlist(createWishlistDto, req.user.id);
-
-    return wishlist;
+    return await this.wishlistsService.createWishlist(createWishlistDto, req.user.id);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    const wishlist = await this.wishlistsService.findOne(id);
-
-    return wishlist;
+    return await this.wishlistsService.findOne(id);
   }
 
   @Patch(':id')
   async updateOne(@Req() req, @Param('id') id: number, @Body() updateWishlistDto: UpdateWishlistDTO) {
-    const updatedWishlist = await this.wishlistsService.updateOne(updateWishlistDto, id, {
+    return await this.wishlistsService.updateOne(updateWishlistDto, id, {
       field: 'id',
       value: req.user.id,
     });
-
-    return updatedWishlist;
   }
 
   @Delete(':id')
   async deleteOne(@Req() req, @Param('id') id: number) {
-    const deletedWishlist = await this.wishlistsService.deleteOne(id, {
+    return await this.wishlistsService.deleteOne(id, {
       field: 'id',
       value: req.user.id,
     });
-
-    return deletedWishlist;
   }
 }

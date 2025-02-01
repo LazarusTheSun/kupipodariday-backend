@@ -16,9 +16,7 @@ export class AuthController {
   @Post('signup')
   async signUp(@Body() createUserDTO: CreateUserDTO) {
     try {
-      const user = await this.usersService.create(createUserDTO);
-
-      return user;
+      return await this.usersService.create(createUserDTO);
     } catch (err) {
       if (err.code === '23505') {
         throw new UserAlreadyExistsException();

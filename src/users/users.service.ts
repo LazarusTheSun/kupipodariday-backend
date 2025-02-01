@@ -33,14 +33,12 @@ export class UsersService {
   async findUsers(findUsersDto: FindUsersDTO) {
     const { query } = findUsersDto;
 
-    const users = await this.usersRepository.find({
+    return await this.usersRepository.find({
       where: [
         { username: query },
         { email: query }
       ]
     });
-
-    return users;
   }
 
   async findUser(findUserDto: FindUserDTO, selectColumns = { password: false, email: false, }) {

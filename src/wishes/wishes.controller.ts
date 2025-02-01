@@ -11,43 +11,33 @@ export class WishesController {
 
   @Post()
   async createWish(@Req() req, @Body() createWishDto: CreateWishDTO) {
-    const wish = await this.wishesService.createWish(createWishDto, {
+    return await this.wishesService.createWish(createWishDto, {
       field: 'id',
       value: req.user.id,
     });
-
-    return wish;
   }
 
   @Get('last')
   async findMostRecentWishes() {
-    const wishes = await this.wishesService.findMostRecentWishes();
-
-    return wishes;
+    return await this.wishesService.findMostRecentWishes();
   }
 
   @Get('top')
   async findTopWishes() {
-    const wishes = await this.wishesService.findTopWishes();
-
-    return wishes;
+    return await this.wishesService.findTopWishes();
   }
 
   @Post(':id/copy')
   async copyWish(@Req() req, @Param() params: any) {
-    const copiedWish = await this.wishesService.copyWish(params.id, {
+    return await this.wishesService.copyWish(params.id, {
       field: 'id',
       value: req.user.id,
     });
-
-    return copiedWish;
   }
 
   @Get(':id')
   async findWish(@Param('id') id: number) {
-    const wish = await this.wishesService.findWish(id);
-
-    return wish;
+    return await this.wishesService.findWish(id);
   }
 
   @Delete(':id')
@@ -60,8 +50,6 @@ export class WishesController {
 
   @Patch(':id')
   async updateWish(@Req() req, @Param('id') id: number, @Body() updateWishDto: UpdateWishDTO) {
-    const updatedWish = await this.wishesService.updateWish(id, updateWishDto, { field: 'id', value: req.user.id });
-
-    return updatedWish;
+    return await this.wishesService.updateWish(id, updateWishDto, { field: 'id', value: req.user.id });
   }
 }

@@ -3,13 +3,14 @@ import { CreateOfferDTO } from './dto/create-offer.dto';
 import { WishesService } from 'src/wishes/wishes.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Offer } from './entities/offers.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { FindUserDTO } from 'src/users/dto/find-user.dto';
 
 @Injectable()
 export class OffersService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(Offer) private offersRepository: Repository<Offer>,
     @Inject(forwardRef(() => WishesService)) private wishesService: WishesService,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
@@ -43,15 +44,28 @@ export class OffersService {
       throw new BadRequestException('you cannot make an offer to yourself');
     }
 
-    await this.offersRepository.save({
-      amount,
-      hidden,
-      item: wish,
-      user,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const {moneyRaised, wishId} = await this.wishesService.calcMoneyRaised(itemId);
-    await this.wishesService.setRaisedMoney(wishId, moneyRaised);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await this.offersRepository.save({
+        amount,
+        hidden,
+        item: wish,
+        user,
+      });
+  
+      const {moneyRaised, wishId} = await this.wishesService.calcMoneyRaised(itemId);
+      await this.wishesService.setRaisedMoney(wishId, moneyRaised);
+
+      queryRunner.commitTransaction();
+    } catch(_) {
+      queryRunner.rollbackTransaction();
+    } finally {
+      queryRunner.release();
+    }
 
     return {};
   }

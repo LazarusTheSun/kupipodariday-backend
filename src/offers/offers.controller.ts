@@ -18,16 +18,12 @@ export class OffersController {
 
   @Get()
   async findOffers() {
-    const offers = await this.offersService.findOffers();
-
-    return offers;
+    return await this.offersService.findOffers();
   }
 
   @Get(':id')
   async findOffer(@Param('id') id: number) {
-    const offer = await this.offersService.findOffer(id);
-
-    return offer;
+    return await this.offersService.findOffer(id);
   }
 
   @Patch(':id')
